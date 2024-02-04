@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @RequiredArgsConstructor
 public class SingleValueMessageDataBuilder implements OfsKeyValueMessageDataBuilder{
+
     @Override
     public boolean supports(Object incomingValueInstance) {
         return incomingValueInstance instanceof String;
@@ -15,6 +16,6 @@ public class SingleValueMessageDataBuilder implements OfsKeyValueMessageDataBuil
 
     @Override
     public String build(String key, Object incomingValue) {
-        return null;
+        return key.concat(SINGLE_KEY_VALUE_JOINER).concat(String.valueOf(incomingValue));
     }
 }
