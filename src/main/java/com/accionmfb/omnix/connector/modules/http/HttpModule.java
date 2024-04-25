@@ -7,7 +7,8 @@ import org.springframework.context.annotation.Import;
 
 @Import({
         OmnixDefaultWebClient.class,
-        WebClientLogger.class
+        WebClientLogger.class,
+        OmnixRestTemplateConfig.class
 })
 public class HttpModule {
 }

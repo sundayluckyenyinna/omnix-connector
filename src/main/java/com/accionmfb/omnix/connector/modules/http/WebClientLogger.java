@@ -5,8 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kong.unirest.HttpResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpStatusCodeException;
 
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Objects;
 
@@ -36,6 +39,30 @@ public class WebClientLogger {
             try{ log.info("Response Body: {}", httpResponse.getBody()); } catch (Exception ignored){}
             try { log.info("Response Headers: {}", objectMapper.writeValueAsString(httpResponse.getHeaders().all()));} catch (Exception ignored){}
             log.info("Response Cookies: {}", httpResponse.getCookies());
+            log.info("=====================================================================================================================================");
+            System.out.println();
+        }catch (Exception ignored){}
+    }
+
+    public void logApiResponse(ResponseEntity<?> responseEntity){
+        try {
+            log.info("------------------------------------------------ EXTERNAL SERVICE API RESPONSE END --------------------------------------------------");
+            log.info("Http Status: {}", responseEntity.getStatusCode());
+            try{ log.info("Response Body: {}", responseEntity.getBody()); } catch (Exception ignored){}
+            try { log.info("Response Headers: {}", objectMapper.writeValueAsString(responseEntity.getHeaders().toSingleValueMap()));} catch (Exception ignored){}
+            log.info("Response Cookies: {}", new LinkedList<>());
+            log.info("=====================================================================================================================================");
+            System.out.println();
+        }catch (Exception ignored){}
+    }
+
+    public void logHttpStatusCodeException(HttpStatusCodeException exception){
+        try {
+            log.info("------------------------------------------------ EXTERNAL SERVICE API EXCEPTION END --------------------------------------------------");
+            log.info("Http Status: {}", exception.getStatusCode());
+            try{ log.info("Response Body: {}", exception.getResponseBodyAsString()); } catch (Exception ignored){}
+            log.info("Response Cookies: {}", new LinkedList<>());
+            log.info("Exception message: {}", exception.getMessage());
             log.info("=====================================================================================================================================");
             System.out.println();
         }catch (Exception ignored){}

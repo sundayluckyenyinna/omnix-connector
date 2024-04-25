@@ -1,6 +1,7 @@
 package com.accionmfb.omnix.connector.modules.http;
 
 import kong.unirest.HttpResponse;
+import org.springframework.util.MultiValueMap;
 
 import java.util.Map;
 
@@ -43,4 +44,9 @@ public interface OmnixWebClient {
     <T> T putForObject(String url, Map<String, String> headers, Object body, Class<T> tClass);
 
     <T> T putForObject(String url, Map<String, String> headers, Object body, Map<String, Object> params, Class<T> tClass);
+
+    // ---------------------------- FORM DATA -------------------- //
+    <T> T postForm(String url, MultiValueMap<String, Object> formData, Map<String, String> headers, Class<T> tClass);
+
+    <T> T postForm(String url, MultiValueMap<String, Object> formData, Map<String, String> headers, Map<String, Object> params, Class<T> tClass);
 }
