@@ -1,7 +1,7 @@
 package com.accionmfb.omnix.connector.util;
 
 @FunctionalInterface
-public interface FallbackKafkaOperation {
+public interface FallbackBrokerOperation {
 
     void runFallbackOperation();
 }

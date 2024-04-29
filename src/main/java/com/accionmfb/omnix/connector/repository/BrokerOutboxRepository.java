@@ -1,5 +1,6 @@
 package com.accionmfb.omnix.connector.repository;
 
+import com.accionmfb.omnix.connector.commons.Broker;
 import com.accionmfb.omnix.connector.commons.BrokerMessageDeliveryStatus;
 import com.accionmfb.omnix.connector.model.BrokerOutbox;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +34,8 @@ public class BrokerOutboxRepository {
             ps.setString(3, brokerOutbox.getPayload());
             ps.setTimestamp(4, Timestamp.valueOf(brokerOutbox.getCreatedAt()));
             ps.setTimestamp(5, Timestamp.valueOf(brokerOutbox.getUpdatedAt()));
-            ps.setString(6, brokerOutbox.getStatus().name());
+            ps.setString(6, brokerOutbox.getBroker().name());
+            ps.setString(7, brokerOutbox.getStatus().name());
             return ps;
         }, keyHolder);
         brokerOutbox.setId(keyHolder.getKey().longValue());
@@ -63,6 +65,7 @@ public class BrokerOutboxRepository {
                 .payload(rs.getString("payload"))
                 .createdAt(rs.getTimestamp("created_at").toLocalDateTime())
                 .updatedAt(rs.getTimestamp("updated_at").toLocalDateTime())
+                .broker(Broker.valueOf(rs.getString("broker")))
                 .status(BrokerMessageDeliveryStatus.valueOf(rs.getString("status")))
                 .build());
     }

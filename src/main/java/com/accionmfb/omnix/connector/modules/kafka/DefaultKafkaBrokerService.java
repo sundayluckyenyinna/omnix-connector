@@ -1,9 +1,12 @@
 package com.accionmfb.omnix.connector.modules.kafka;
 
+import com.accionmfb.omnix.connector.commons.Broker;
 import com.accionmfb.omnix.connector.commons.BrokerMessageDeliveryStatus;
 import com.accionmfb.omnix.connector.model.BrokerOutbox;
+import com.accionmfb.omnix.connector.modules.OmnixStreamPayload;
+import com.accionmfb.omnix.connector.modules.nats.DefaultNatsService;
 import com.accionmfb.omnix.connector.repository.BrokerOutboxRepository;
-import com.accionmfb.omnix.connector.util.FallbackKafkaOperation;
+import com.accionmfb.omnix.connector.util.FallbackBrokerOperation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -30,8 +33,8 @@ public class DefaultKafkaBrokerService implements KafkaService{
 
     @Override
     @SneakyThrows
-    public void publishMessage(Object topic, OmnixKafkaPayload omnixKafkaPayload){
-        String payloadJson = objectMapper.writeValueAsString(omnixKafkaPayload);
+    public void publishMessage(Object topic, OmnixStreamPayload<?> omnixStreamPayload){
+        String payloadJson = objectMapper.writeValueAsString(omnixStreamPayload);
         String topicStr = String.valueOf(topic);
         BrokerOutbox outbox = buildOutbox(topicStr, null, payloadJson);
         BrokerOutbox createdOutbox = repository.saveAndFlush(outbox);
@@ -41,8 +44,8 @@ public class DefaultKafkaBrokerService implements KafkaService{
 
     @Override
     @SneakyThrows
-    public void publishMessage(Object topic, String key, OmnixKafkaPayload omnixKafkaPayload){
-        String payloadJson = objectMapper.writeValueAsString(omnixKafkaPayload);
+    public void publishMessage(Object topic, String key, OmnixStreamPayload<?> omnixStreamPayload){
+        String payloadJson = objectMapper.writeValueAsString(omnixStreamPayload);
         String topicStr = String.valueOf(topic);
         BrokerOutbox outbox = buildOutbox(topicStr, key, payloadJson);
         BrokerOutbox createdOutbox = repository.saveAndFlush(outbox);
@@ -52,8 +55,8 @@ public class DefaultKafkaBrokerService implements KafkaService{
 
     @Override
     @SneakyThrows
-    public void publishMessageWithFallback(Object topic, OmnixKafkaPayload omnixKafkaPayload, FallbackKafkaOperation operation){
-        String payloadJson = objectMapper.writeValueAsString(omnixKafkaPayload);
+    public void publishMessageWithFallback(Object topic, OmnixStreamPayload<?> omnixStreamPayload, FallbackBrokerOperation operation){
+        String payloadJson = objectMapper.writeValueAsString(omnixStreamPayload);
         String topicStr = String.valueOf(topic);
         ListenableFuture<SendResult<String, String>> future = publishMessageWithoutOutbox(topicStr, payloadJson);
         future.addCallback(new ListenableFutureCallback<>() {
@@ -81,8 +84,8 @@ public class DefaultKafkaBrokerService implements KafkaService{
 
     @Override
     @SneakyThrows
-    public void publishMessageWithFallback(Object topic, String key, OmnixKafkaPayload omnixKafkaPayload, FallbackKafkaOperation operation){
-        String payloadJson = objectMapper.writeValueAsString(omnixKafkaPayload);
+    public void publishMessageWithFallback(Object topic, String key, OmnixStreamPayload<?> omnixStreamPayload, FallbackBrokerOperation operation){
+        String payloadJson = objectMapper.writeValueAsString(omnixStreamPayload);
         String topicStr = String.valueOf(topic);
         ListenableFuture<SendResult<String, String>> future = publishMessageWithoutOutbox(topicStr, payloadJson);
         future.addCallback(new ListenableFutureCallback<>() {
@@ -94,6 +97,7 @@ public class DefaultKafkaBrokerService implements KafkaService{
                 log.warn("Kafka broker did not acknowledge/establish handshake. The default operation will be executed");
                 log.info("-------------------------------------------------------------------------------------------------------------------------------------------");
                 System.out.println();
+                log.info("The fall back operation will be called");
                 operation.runFallbackOperation();
             }
 
@@ -133,8 +137,8 @@ public class DefaultKafkaBrokerService implements KafkaService{
             public void onSuccess(SendResult<String, String> stringStringSendResult) {
                 System.out.println();
                 log.info("-------------------------------------------------------------------------------------------------------------------------------------------");
-                log.info("Kafka broker acknowledge the message successfully to the topic '{}' and message key: '{}'", createdOutbox.getTopic(), createdOutbox.getMessageKey());
-                try {
+                log.info("Kafka broker acknowledge the message successfully to the topic '{}' and message key '{}'", createdOutbox.getTopic(), createdOutbox.getMessageKey());
+                try{
                     log.info("Deleting successfully sent message from outbox table");
                     repository.deleteBrokerOutbox(createdOutbox);
                     log.info("Message deleted successfully");
@@ -149,6 +153,7 @@ public class DefaultKafkaBrokerService implements KafkaService{
 
     private BrokerOutbox buildOutbox(String topic, String key, String payloadJson){
         return BrokerOutbox.builder()
+                .broker(Broker.KAFKA)
                 .status(BrokerMessageDeliveryStatus.PENDING)
                 .createdAt(getCurrentDateTime())
                 .updatedAt(getCurrentDateTime())

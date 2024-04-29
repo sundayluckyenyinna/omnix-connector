@@ -8,8 +8,8 @@ import org.apache.logging.log4j.util.Strings;
 public class SqlQueryProvider {
 
     public static String getOutboxSaveQuery(BrokerOutbox outbox){
-        return "INSERT INTO broker_outbox (topic, message_key, payload, created_at, updated_at, status) " +
-                "VALUES (?, ?, ?, ?, ?, ?)";
+        return "INSERT INTO broker_outbox (topic, message_key, payload, created_at, updated_at, broker, status) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
     }
 
     public static String getOutboxUpdateQuery(BrokerOutbox outbox){

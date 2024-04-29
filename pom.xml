@@ -94,6 +94,13 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
         </dependency>
+
+        <!-- NATS -->
+        <dependency>
+            <groupId>io.nats</groupId>
+            <artifactId>nats-spring</artifactId>
+            <version>0.5.7</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

@@ -5,4 +5,5 @@ public interface StringValues {
     String COMMA = ",";
     String FORWARD_SLASH = "/";
     String COLON = ":";
+    String SPRING_CLASS_ENHANCE_SUFFIX = "$$EnhancerBySpringCGLIB";
 }

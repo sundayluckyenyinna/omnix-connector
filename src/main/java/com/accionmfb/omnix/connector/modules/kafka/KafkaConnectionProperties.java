@@ -10,4 +10,5 @@ import org.springframework.validation.annotation.Validated;
 public class KafkaConnectionProperties {
     private String bootstrapServers = "localhost:9092";
     private String groupId = "consumer-group-id";
+    private boolean enable = false;
 }
