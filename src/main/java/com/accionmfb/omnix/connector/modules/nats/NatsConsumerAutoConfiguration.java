@@ -35,7 +35,9 @@ public class NatsConsumerAutoConfiguration {
             for (Map.Entry<String, Object> entry : beanDefinitions.entrySet()) {
                 String beanName = entry.getKey();
                 String springName = applicationContext.getBean(beanName).getClass().getName();
-                String actualBeanName = springName.substring(0, springName.indexOf(StringValues.SPRING_CLASS_ENHANCE_SUFFIX));
+                String actualBeanName = springName.contains(StringValues.SPRING_CLASS_ENHANCE_SUFFIX) ?
+                        springName.substring(0, springName.indexOf(StringValues.SPRING_CLASS_ENHANCE_SUFFIX)) :
+                        springName.trim();
                 Class<?> beanClass = Class.forName(actualBeanName);
                 Object bean = applicationContext.getBean(beanClass);
                 Arrays.stream(beanClass.getDeclaredMethods())
