@@ -36,7 +36,7 @@ public class WebClientLogger {
         try {
             log.info("------------------------------------------------ EXTERNAL SERVICE API RESPONSE END --------------------------------------------------");
             log.info("Http Status: {} {}", httpResponse.getStatus(), httpResponse.getStatusText());
-            try{ log.info("Response Body: {}", httpResponse.getBody()); } catch (Exception ignored){}
+            try{ log.info("Response Body: {}", httpResponse.getBody().length() > 10_000 ? httpResponse.getBody().substring(0, 10_000) : httpResponse.getBody()); } catch (Exception ignored){}
             try { log.info("Response Headers: {}", objectMapper.writeValueAsString(httpResponse.getHeaders().all()));} catch (Exception ignored){}
             log.info("Response Cookies: {}", httpResponse.getCookies());
             log.info("=====================================================================================================================================");
@@ -48,7 +48,10 @@ public class WebClientLogger {
         try {
             log.info("------------------------------------------------ EXTERNAL SERVICE API RESPONSE END --------------------------------------------------");
             log.info("Http Status: {}", responseEntity.getStatusCode());
-            try{ log.info("Response Body: {}", responseEntity.getBody()); } catch (Exception ignored){}
+            try{
+                String body = responseEntity.getBody() instanceof String ? (String)responseEntity.getBody() : objectMapper.writeValueAsString(responseEntity.getBody());
+                log.info("Response Body: {}", body.length() > 10_000 ? body.substring(0, 10_000) : body);
+            } catch (Exception ignored){}
             try { log.info("Response Headers: {}", objectMapper.writeValueAsString(responseEntity.getHeaders().toSingleValueMap()));} catch (Exception ignored){}
             log.info("Response Cookies: {}", new LinkedList<>());
             log.info("=====================================================================================================================================");

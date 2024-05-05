@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Configuration
@@ -22,7 +23,19 @@ public class DefaultRedisCacheService implements RedisCacheService{
     @Override
     public void save(String key, Object value){
         redisTemplate.opsForValue().set(key, resolveRedisValue(value));
-        logSaveOperation(key, value);
+        logSaveOperation(key, resolveRedisValue(value));
+    }
+
+    @Override
+    public void saveWithExpiry(String key, Object value, long expiryInSec){
+        redisTemplate.opsForValue().set(key, resolveRedisValue(value), expiryInSec, TimeUnit.SECONDS);
+        logSaveOperation(key, resolveRedisValue(value));
+    }
+
+    @Override
+    public void saveWithExpiry(String key, Object value, long expiry, TimeUnit timeUnit){
+        redisTemplate.opsForValue().set(key, resolveRedisValue(value), expiry, timeUnit);
+        logSaveOperation(key, resolveRedisValue(value));
     }
 
     @Override

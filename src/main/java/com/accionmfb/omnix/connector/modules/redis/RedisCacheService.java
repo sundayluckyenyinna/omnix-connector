@@ -3,8 +3,14 @@ package com.accionmfb.omnix.connector.modules.redis;
 import com.accionmfb.omnix.connector.util.ParameterizedRedisDataRetrievalFallbackOperation;
 import com.accionmfb.omnix.connector.util.RedisDataRetrievalFallbackOperation;
 
+import java.util.concurrent.TimeUnit;
+
 public interface RedisCacheService {
     void save(String key, Object value);
+
+    void saveWithExpiry(String key, Object value, long expiryInSec);
+
+    void saveWithExpiry(String key, Object value, long expiry, TimeUnit timeUnit);
 
     Object get(String key);
 
