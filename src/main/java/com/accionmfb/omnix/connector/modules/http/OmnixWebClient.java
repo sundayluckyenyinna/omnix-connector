@@ -1,6 +1,7 @@
 package com.accionmfb.omnix.connector.modules.http;
 
 import kong.unirest.HttpResponse;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 
 import java.util.Map;
@@ -8,8 +9,8 @@ import java.util.Map;
 public interface OmnixWebClient {
 
     // ------------------------------------ GET ------------------------------------ //
-    HttpResponse<String> getForHttpResponse(String url, Map<String, String> headers);
-    HttpResponse<String> getForHttpResponse(String url, Map<String, String> headers, Map<String, Object> params);
+    ResponseEntity<String> getForHttpResponse(String url, Map<String, String> headers);
+    ResponseEntity<String> getForHttpResponse(String url, Map<String, String> headers, Map<String, Object> params);
     String getForObject(String url, Map<String, String> headers);
 
     String getForObject(String url, Map<String, String> headers, Map<String, Object> params);
@@ -20,9 +21,9 @@ public interface OmnixWebClient {
 
 
     // ------------------------------------- POST ------------------------------------- //
-    HttpResponse<String> postForHttpResponse(String url, Map<String, String> headers, Object body);
+    ResponseEntity<String> postForHttpResponse(String url, Map<String, String> headers, Object body);
 
-    HttpResponse<String> postForHttpResponse(String url, Map<String, String> headers, Object body, Map<String, Object> params);
+    ResponseEntity<String> postForHttpResponse(String url, Map<String, String> headers, Object body, Map<String, Object> params);
 
     String postForObject(String url, Map<String, String> headers, Object body, Map<String, Object> params);
 
@@ -33,9 +34,9 @@ public interface OmnixWebClient {
     <T> T postForObject(String url, Map<String, String> headers, Object body, Map<String, Object> params, Class<T> tClass);
 
     // ------------------------------------- PUT ------------------------------------- //
-    HttpResponse<String> putForHttpResponse(String url, Map<String, String> headers, Object body);
+    ResponseEntity<String> putForHttpResponse(String url, Map<String, String> headers, Object body);
 
-    HttpResponse<String> putForHttpResponse(String url, Map<String, String> headers, Object body, Map<String, Object> params);
+    ResponseEntity<String> putForHttpResponse(String url, Map<String, String> headers, Object body, Map<String, Object> params);
 
     String putForObject(String url, Map<String, String> headers, Object body);
 

@@ -34,31 +34,19 @@ public class OmnixDefaultWebClient implements OmnixWebClient {
     private final ObjectMapper objectMapper;
 
 
-    private static void initUnirestConnector(){
-        Unirest.config().verifySsl(false);
-    }
-
     @Override
-    public HttpResponse<String> getForHttpResponse(String url, Map<String, String> headers){
-        initUnirestConnector();
+    public ResponseEntity<String> getForHttpResponse(String url, Map<String, String> headers){
         logger.logApiRequest(HttpMethod.GET.name(), url, headers, StringValues.EMPTY_STRING, new LinkedHashMap<>());
-        HttpResponse<String> httpResponse = Unirest.get(url)
-                .headers(headers)
-                .asString();
-        logger.logApiResponse(httpResponse);
-        return httpResponse;
+        HttpEntity<?> httpEntity = new HttpEntity<>(getHeadersFromMap(headers));
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url, org.springframework.http.HttpMethod.GET, httpEntity, String.class);
+        logger.logApiResponse(responseEntity);
+        return responseEntity;
     }
 
     @Override
-    public HttpResponse<String> getForHttpResponse(String url, Map<String, String> headers, Map<String, Object> params){
-        initUnirestConnector();
-        logger.logApiRequest(HttpMethod.GET.name(), url, headers, StringValues.EMPTY_STRING, params);
-        HttpResponse<String> httpResponse = Unirest.get(url)
-                .headers(headers)
-                .queryString(params)
-                .asString();
-        logger.logApiResponse(httpResponse);
-        return httpResponse;
+    public ResponseEntity<String> getForHttpResponse(String url, Map<String, String> headers, Map<String, Object> params){
+        String fullUrl = formatBaseUrlWithQueryParams(url, params);
+        return getForHttpResponse(fullUrl, headers);
     }
 
     @Override
@@ -95,29 +83,20 @@ public class OmnixDefaultWebClient implements OmnixWebClient {
     // ------------------------------------- POST ------------------------------------- //
     @Override
     @SneakyThrows
-    public HttpResponse<String> postForHttpResponse(String url, Map<String, String> headers, Object body){
-        initUnirestConnector();
+    public ResponseEntity<String> postForHttpResponse(String url, Map<String, String> headers, Object body){
         logger.logApiRequest(HttpMethod.POST.name(), url, headers, body, new LinkedHashMap<>());
-        HttpResponse<String> httpResponse = Unirest.post(url)
-                .headers(headers)
-                .body(body instanceof String ? body : objectMapper.writeValueAsString(body))
-                .asString();
-        logger.logApiResponse(httpResponse);
-        return httpResponse;
+        String bodyJson = body instanceof String ? (String) body : objectMapper.writeValueAsString(body);
+        HttpEntity<String> httpEntity = new HttpEntity<>(bodyJson, getHeadersFromMap(headers));
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url, org.springframework.http.HttpMethod.POST, httpEntity, String.class);
+        logger.logApiResponse(responseEntity);
+        return responseEntity;
     }
 
     @Override
     @SneakyThrows
-    public HttpResponse<String> postForHttpResponse(String url, Map<String, String> headers, Object body, Map<String, Object> params){
-        initUnirestConnector();
-        logger.logApiRequest(HttpMethod.POST.name(), url, headers, body, new LinkedHashMap<>());
-        HttpResponse<String> httpResponse = Unirest.post(url)
-                .headers(headers)
-                .body(body instanceof String ? body : objectMapper.writeValueAsString(body))
-                .queryString(params)
-                .asString();
-        logger.logApiResponse(httpResponse);
-        return httpResponse;
+    public ResponseEntity<String> postForHttpResponse(String url, Map<String, String> headers, Object body, Map<String, Object> params){
+        String fullUrl = formatBaseUrlWithQueryParams(url, params);
+        return postForHttpResponse(fullUrl, headers, body);
     }
 
     @Override
@@ -154,29 +133,20 @@ public class OmnixDefaultWebClient implements OmnixWebClient {
     // ------------------------------------- PUT ------------------------------------- //
     @Override
     @SneakyThrows
-    public HttpResponse<String> putForHttpResponse(String url, Map<String, String> headers, Object body){
-        initUnirestConnector();
+    public ResponseEntity<String> putForHttpResponse(String url, Map<String, String> headers, Object body){
         logger.logApiRequest(HttpMethod.PUT.name(), url, headers, body, new LinkedHashMap<>());
-        HttpResponse<String> httpResponse = Unirest.put(url)
-                .headers(headers)
-                .body(body instanceof String ? body : objectMapper.writeValueAsString(body))
-                .asString();
-        logger.logApiResponse(httpResponse);
-        return httpResponse;
+        String bodyJson = body instanceof String ? (String) body : objectMapper.writeValueAsString(body);
+        HttpEntity<String> httpEntity = new HttpEntity<>(bodyJson, getHeadersFromMap(headers));
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url, org.springframework.http.HttpMethod.PUT, httpEntity, String.class);
+        logger.logApiResponse(responseEntity);
+        return responseEntity;
     }
 
     @Override
     @SneakyThrows
-    public HttpResponse<String> putForHttpResponse(String url, Map<String, String> headers, Object body, Map<String, Object> params){
-        initUnirestConnector();
-        logger.logApiRequest(HttpMethod.PUT.name(), url, headers, body, new LinkedHashMap<>());
-        HttpResponse<String> httpResponse = Unirest.put(url)
-                .headers(headers)
-                .body(body instanceof String ? body : objectMapper.writeValueAsString(body))
-                .queryString(params)
-                .asString();
-        logger.logApiResponse(httpResponse);
-        return httpResponse;
+    public ResponseEntity<String> putForHttpResponse(String url, Map<String, String> headers, Object body, Map<String, Object> params){
+        String fullUrl = formatBaseUrlWithQueryParams(url, params);
+        return putForHttpResponse(fullUrl, headers, body);
     }
 
     @Override
@@ -254,5 +224,11 @@ public class OmnixDefaultWebClient implements OmnixWebClient {
         });
         String totalQueryParams = queryJoiner.toString();
         return url.concat("?").concat(totalQueryParams);
+    }
+
+    private HttpHeaders getHeadersFromMap(Map<String, String> mapHeaders){
+        HttpHeaders headers = new HttpHeaders();
+        mapHeaders.forEach(headers::add);
+        return headers;
     }
 }
