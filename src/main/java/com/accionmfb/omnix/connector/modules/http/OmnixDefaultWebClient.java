@@ -3,8 +3,6 @@ package com.accionmfb.omnix.connector.modules.http;
 import com.accionmfb.omnix.connector.commons.StringValues;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kong.unirest.HttpMethod;
-import kong.unirest.HttpResponse;
-import kong.unirest.Unirest;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +12,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
