@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisPassword;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
@@ -25,21 +26,23 @@ public class OmnixRedisConfig {
 
     @Bean
     JedisConnectionFactory jedisConnectionFactory() {
-
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
         redisStandaloneConfiguration.setHostName(redisConfigurationProperties.getHost());
         redisStandaloneConfiguration.setPort(Integer.parseInt(redisConfigurationProperties.getPort()));
+        redisStandaloneConfiguration.setPassword(redisConfigurationProperties.getPassword());
 
         JedisClientConfiguration.JedisClientConfigurationBuilder jedisClientConfiguration = JedisClientConfiguration.builder();
         jedisClientConfiguration.connectTimeout(Duration.ofSeconds(Integer.parseInt(redisConfigurationProperties.getConnectionTimeout())));
 
         JedisConnectionFactory connectionFactory = new JedisConnectionFactory(redisStandaloneConfiguration, jedisClientConfiguration.build());
-        try (Jedis jedis = new Jedis(redisStandaloneConfiguration.getHostName(), 6379)) {
+        try (Jedis jedis = new Jedis(redisStandaloneConfiguration.getHostName(), redisStandaloneConfiguration.getPort())) {
+            jedis.auth(redisConfigurationProperties.getPassword());
             new String((byte[]) jedis.sendCommand(Protocol.Command.INFO));
                 log.info("\u001B[32m REDIS CONNECTION STARTED AND RUNNING...\u001B[0m");
         }catch (Exception exception){
             log.error("\u001B[31m{}\u001B[0m", "REDIS CONNECTION FAILED TO ESTABLISH");
-            log.debug("Redis connection error is: {}", exception.getMessage());
+            exception.printStackTrace();
+            log.error("Redis connection error is: {}", exception.getMessage());
         }
         return connectionFactory;
     }

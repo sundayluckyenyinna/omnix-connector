@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "redis.connection.properties")
 public class RedisConfigurationProperties {
     private String host = "localhost";
-    private String port = "9092";
+    private String port = "6379";
     private String connectionTimeout = "60";
+    private String password = "p@ssword1";
 }

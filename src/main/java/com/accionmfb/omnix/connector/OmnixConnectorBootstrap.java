@@ -5,6 +5,7 @@ import com.accionmfb.omnix.connector.modules.http.HttpModule;
 import com.accionmfb.omnix.connector.modules.kafka.KafkaModule;
 import com.accionmfb.omnix.connector.modules.nats.NatsModule;
 import com.accionmfb.omnix.connector.modules.redis.RedisModule;
+import com.accionmfb.omnix.connector.modules.ws.WsModule;
 import com.accionmfb.omnix.connector.repository.RepositoryModule;
 import com.accionmfb.omnix.connector.scheduler.SchedulerModule;
 import org.springframework.context.annotation.Import;
@@ -15,6 +16,7 @@ import org.springframework.context.annotation.Import;
         KafkaModule.class,
         NatsModule.class,
         RedisModule.class,
+        WsModule.class,
         RepositoryModule.class,
         SchedulerModule.class,
         ApplicationConfig.class
