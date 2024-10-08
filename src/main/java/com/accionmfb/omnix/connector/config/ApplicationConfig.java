@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
@@ -18,8 +19,6 @@ import javax.sql.DataSource;
 @Configuration
 @RequiredArgsConstructor
 public class ApplicationConfig {
-
-    private static ObjectMapper OBJECT_MAPPER;
 
     @Bean
     @ConditionalOnMissingBean(value = ObjectMapper.class)
@@ -33,6 +32,7 @@ public class ApplicationConfig {
     }
 
     @Bean
+    @Primary
     public JdbcTemplate ouboxJdbcTemplate(@Autowired DataSource dataSource){
         return new JdbcTemplate(dataSource);
     }
