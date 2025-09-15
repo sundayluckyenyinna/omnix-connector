@@ -1,6 +1,7 @@
 package com.accionmfb.omnix.connector.modules.http;
 
 import kong.unirest.HttpResponse;
+import lombok.SneakyThrows;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 
@@ -19,6 +20,9 @@ public interface OmnixWebClient {
     <T> T getForObject(String url, Map<String, String> headers, Map<String, Object> params, Class<T> tClass);
 
 
+    // ------------------------------------- POST ------------------------------------- //
+    @SneakyThrows
+    ResponseEntity<String> postForHttpResponse(String url, Map<String, String> headers, Object body, boolean doLogs);
 
     // ------------------------------------- POST ------------------------------------- //
     ResponseEntity<String> postForHttpResponse(String url, Map<String, String> headers, Object body);

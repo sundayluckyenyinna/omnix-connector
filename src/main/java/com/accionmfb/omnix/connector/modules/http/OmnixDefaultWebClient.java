@@ -80,13 +80,23 @@ public class OmnixDefaultWebClient implements OmnixWebClient {
     // ------------------------------------- POST ------------------------------------- //
     @Override
     @SneakyThrows
-    public ResponseEntity<String> postForHttpResponse(String url, Map<String, String> headers, Object body){
-        logger.logApiRequest(HttpMethod.POST.name(), url, headers, body, new LinkedHashMap<>());
+    public ResponseEntity<String> postForHttpResponse(String url, Map<String, String> headers, Object body, boolean doLogs){
+        if(doLogs) {
+            logger.logApiRequest(HttpMethod.POST.name(), url, headers, body, new LinkedHashMap<>());
+        }
         String bodyJson = body instanceof String ? (String) body : objectMapper.writeValueAsString(body);
         HttpEntity<String> httpEntity = new HttpEntity<>(bodyJson, getHeadersFromMap(headers));
         ResponseEntity<String> responseEntity = restTemplate.exchange(url, org.springframework.http.HttpMethod.POST, httpEntity, String.class);
-        logger.logApiResponse(responseEntity);
+        if(doLogs) {
+            logger.logApiResponse(responseEntity);
+        }
         return responseEntity;
+    }
+
+    @Override
+    @SneakyThrows
+    public ResponseEntity<String> postForHttpResponse(String url, Map<String, String> headers, Object body){
+        return postForHttpResponse(url, headers, body, true);
     }
 
     @Override

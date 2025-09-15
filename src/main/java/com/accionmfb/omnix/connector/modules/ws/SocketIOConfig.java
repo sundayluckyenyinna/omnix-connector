@@ -1,6 +1,7 @@
 package com.accionmfb.omnix.connector.modules.ws;
 
 import com.corundumstudio.socketio.SocketIOServer;
+import com.corundumstudio.socketio.Transport;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -39,6 +40,8 @@ public class SocketIOConfig {
         com.corundumstudio.socketio.Configuration configuration = new com.corundumstudio.socketio.Configuration();
         configuration.setHostname(host);
         configuration.setPort(port);
+        configuration.setTransports(Transport.WEBSOCKET, Transport.POLLING);
+        configuration.setOrigin("*");
         return configuration;
     }
 
